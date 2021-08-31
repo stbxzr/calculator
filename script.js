@@ -5,29 +5,89 @@ class Calculator {
     this.clear();
   }
 
+  //define all the functions
+
   clear() {
-    this.currentOperand = "";
-    this.previousOperand = "";
+    this.currentTyped = "";
+    this.previousTyped = "";
     this.operation = undefined;
   }
 
-  delete() {}
+  delete() {
+    this.currentTyped = this.currentTyped.toString().slice(0, -1);
+  }
 
   appendNumber(number) {
-    if (number === "." && this.currentOperand.includes(".")) return;
-    this.currentOperand = this.currentOperand.toString() + number.toString();
+    if (number === "." && this.currentTyped.includes(".")) return;
+    this.currentTyped = this.currentTyped.toString() + number.toString();
   }
 
   chooseOperation(operation) {
+    if (this.currentTyped === "") return;
+    if (this.previousTyped !== "") {
+      this.compute();
+    }
     this.operation = operation;
-    this.previousOperand = tis.currentOperand;
-    this.currentOperand = "";
+    this.previousTyped = this.currentTyped;
+    this.currentTyped = "";
   }
 
-  compute() {}
+  compute() {
+    let computation;
+    const prev = parseFloat(this.previousTyped);
+    const current = parseFloat(this.currentTyped);
+    //if not a number in the previous or not a number in the current
+    if (isNaN(prev) || isNaN(current)) return;
+    switch (this.operation) {
+      case "+":
+        computation = prev + current;
+        break;
+      case "-":
+        computation = prev - current;
+        break;
+      case "*":
+        computation = prev * current;
+        break;
+      case "÷":
+        computation = prev / current;
+        break;
+      default:
+        return;
+    }
+
+    this.currentTyped = computation;
+    this.operation = undefined;
+    this.previousTyped = "";
+  }
+//work on this area
+  getDisplayNumber(number) {
+    const stringNumber = number.toString();
+    const integerDigits = parseFloat(stringNumber.split(".")[0]);
+    const decimalDigits = stringNumber.split(".")[1];
+    let integerDisplay;
+    if (isNaN(integerDigits)) {
+      integerDigits = "";
+    } else {
+      integerDisplay = integerDigits.toLocaleString("en", {
+        maximumFractionDigits: 0,
+      });
+    }
+    if (decimalDigits != null) {
+      return `${integerDisplay}.${decimalDigits}`;
+    } else {
+      return integerDisplay;
+    }
+  }
 
   updateDisplay() {
-    this.currentTypedTextElement.innerText = this.currentOperand;
+    this.currentTypedTextElement.innerText = this.currentTyped;
+    if (this.operation != null) {
+      this.previousTypedTextElement.innerText =
+        //using back ticks, concat the operations
+        `${this.getDisplayNumber(this.previousTyped)} ${this.operation}`;
+    } else {
+      this.previousTypedTextElement.innerText = "";
+    }
   }
 }
 
@@ -59,4 +119,19 @@ operationButtons.forEach((button) => {
     calculator.chooseOperation(button.innerText);
     calculator.updateDisplay();
   });
+});
+
+equalsButton.addEventListener("click", () => {
+  calculator.compute();
+  calculator.updateDisplay();
+});
+
+allClearButton.addEventListener("click", () => {
+  calculator.clear();
+  calculator.updateDisplay();
+});
+
+deleteButton.addEventListener("click", () => {
+  calculator.delete();
+  calculator.updateDisplay();
 });
