@@ -3,6 +3,7 @@ class Calculator {
     this.previousTypedTextElement = previousTypedTextElement;
     this.currentTypedTextElement = currentTypedTextElement;
     this.clear();
+    //clear all inputs
   }
 
   //define all the functions
@@ -59,18 +60,18 @@ class Calculator {
     this.operation = undefined;
     this.previousTyped = "";
   }
-//work on this area
+  //work on this area
   getDisplayNumber(number) {
     const stringNumber = number.toString();
     const integerDigits = parseFloat(stringNumber.split(".")[0]);
     const decimalDigits = stringNumber.split(".")[1];
     let integerDisplay;
     if (isNaN(integerDigits)) {
-      integerDigits = "";
+      integerDisplay = "";
     } else {
       integerDisplay = integerDigits.toLocaleString("en", {
         maximumFractionDigits: 0,
-      });
+      })
     }
     if (decimalDigits != null) {
       return `${integerDisplay}.${decimalDigits}`;
@@ -80,11 +81,11 @@ class Calculator {
   }
 
   updateDisplay() {
-    this.currentTypedTextElement.innerText = this.currentTyped;
+    this.currentTypedTextElement.innerText = 
+    this.getDisplayNumber(this.currentTyped);
     if (this.operation != null) {
       this.previousTypedTextElement.innerText =
-        //using back ticks, concat the operations
-        `${this.getDisplayNumber(this.previousTyped)} ${this.operation}`;
+       `${this.getDisplayNumber(this.previousTyped)} ${this.operation}`;
     } else {
       this.previousTypedTextElement.innerText = "";
     }
